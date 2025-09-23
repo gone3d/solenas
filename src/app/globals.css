@@ -1,3 +1,55 @@
+/* Solace Fonts */
+@font-face {
+  font-family: Mollie Glaston;
+  src: url(https://cdn.prod.website-files.com/632a21d0ec93a082b11988a0/632a228d46ee0a09a1c1b2a1_Mollie%20Glaston.woff2)
+    format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Solace Brand Colors */
+:root {
+  --solace-green: #265b4e;
+  --solace-green-light: #4a8873;
+  --solace-green-dark: #1a3d34;
+}
+
+/* Custom utility classes */
+.bg-solace-green {
+  background-color: var(--solace-green);
+}
+
+.bg-solace-gradient {
+  background: linear-gradient(#285e50, #3f937c);
+}
+
+.text-solace-green {
+  color: var(--solace-green);
+}
+
+.border-solace-green {
+  border-color: var(--solace-green);
+}
+
+.hover\:bg-solace-green-dark:hover {
+  background-color: var(--solace-green-dark);
+}
+
+.font-mollie-glaston {
+  font-family: "Mollie Glaston", serif;
+}
+
+.footer-heading {
+  color: #fff;
+  text-align: center;
+  max-width: 150%;
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  font-weight: 400;
+  line-height: 100%;
+}
