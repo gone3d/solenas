@@ -1,15 +1,7 @@
 "use client";
 
 import React from 'react';
-
-interface UiButtonProps {
-  buttonLabel: string;
-  buttonCallback: () => void;
-  disabled?: boolean;
-  variant?: 'primary' | 'secondary' | 'outline' | 'highlight';
-  size?: 'sm' | 'md' | 'lg';
-  className?: string;
-}
+import { UiButtonProps } from '../data/interfaces';
 
 const UiButton: React.FC<UiButtonProps> = ({
   buttonLabel,

@@ -1,52 +1,38 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import UiButton from "../components/UiButton";
+import Search from "../components/Search";
 import AdvocateTable from "../components/AdvocateTable";
 import AdvocateModal from "../components/AdvocateModal";
+import advocateService from "../services/advocateService";
+import { Advocate } from "../data/interfaces";
 
 export default function Home() {
-  const [advocates, setAdvocates] = useState([]);
-  const [filteredAdvocates, setFilteredAdvocates] = useState([]);
-  const [selectedAdvocate, setSelectedAdvocate] = useState(null);
+  const [advocates, setAdvocates] = useState<Advocate[]>([]);
+  const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
+  const [selectedAdvocate, setSelectedAdvocate] = useState<Advocate | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    console.log("fetching advocates...");
-    fetch("/api/advocates").then((response) => {
-      response.json().then((jsonResponse) => {
-        setAdvocates(jsonResponse.data);
-        setFilteredAdvocates(jsonResponse.data);
-      });
-    });
+    const fetchAdvocates = async () => {
+      try {
+        console.log("fetching advocates...");
+        const advocatesData = await advocateService.getAdvocates();
+        setAdvocates(advocatesData);
+        setFilteredAdvocates(advocatesData);
+      } catch (error) {
+        console.error("Failed to fetch advocates:", error);
+      }
+    };
+
+    fetchAdvocates();
   }, []);
 
-  const onChange = (e) => {
-    const searchTerm = e.target.value;
-
-    document.getElementById("search-term").innerHTML = searchTerm;
-
-    console.log("filtering advocates...");
-    const filteredAdvocates = advocates.filter((advocate) => {
-      return (
-        advocate.firstName.includes(searchTerm) ||
-        advocate.lastName.includes(searchTerm) ||
-        advocate.city.includes(searchTerm) ||
-        advocate.degree.includes(searchTerm) ||
-        advocate.specialties.includes(searchTerm) ||
-        advocate.yearsOfExperience.includes(searchTerm)
-      );
-    });
-
+  const handleFilter = (filteredAdvocates: Advocate[]) => {
     setFilteredAdvocates(filteredAdvocates);
   };
 
-  const onClick = () => {
-    console.log(advocates);
-    setFilteredAdvocates(advocates);
-  };
-
-  const handleShowModal = (advocate) => {
+  const handleShowModal = (advocate: Advocate) => {
     setSelectedAdvocate(advocate);
     setIsModalOpen(true);
   };
@@ -69,38 +55,7 @@ export default function Home() {
       </div>
 
       {/* Search Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end">
-          <div className="flex-1">
-            <label
-              htmlFor="search"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Search Advocates
-            </label>
-            <input
-              id="search"
-              type="text"
-              placeholder="Search by name, city, degree, or specialty..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-              onChange={onChange}
-            />
-          </div>
-          <UiButton
-            buttonLabel="Reset Search"
-            buttonCallback={onClick}
-            variant="outline"
-            size="md"
-          />
-        </div>
-
-        {document.getElementById("search-term")?.innerHTML && (
-          <div className="mt-4 text-sm text-gray-600">
-            Searching for:{" "}
-            <span className="font-medium" id="search-term"></span>
-          </div>
-        )}
-      </div>
+      <Search advocates={advocates} onFilter={handleFilter} />
 
       {/* Table Section */}
       <div className="h-[600px]">
