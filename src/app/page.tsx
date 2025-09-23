@@ -1,10 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import UiButton from "../components/UiButton";
+import AdvocateTable from "../components/AdvocateTable";
+import AdvocateModal from "../components/AdvocateModal";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState([]);
   const [filteredAdvocates, setFilteredAdvocates] = useState([]);
+  const [selectedAdvocate, setSelectedAdvocate] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     console.log("fetching advocates...");
@@ -41,51 +46,77 @@ export default function Home() {
     setFilteredAdvocates(advocates);
   };
 
+  const handleShowModal = (advocate) => {
+    setSelectedAdvocate(advocate);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedAdvocate(null);
+  };
+
   return (
-    <main style={{ margin: "24px" }}>
-      <h1>Solace Advocates</h1>
-      <br />
-      <br />
-      <div>
-        <p>Search</p>
-        <p>
-          Searching for: <span id="search-term"></span>
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2 font-mollie-glaston">
+          Solace Advocates
+        </h1>
+
+        <p className="text-lg text-gray-600 mb-4 font-mollie-glaston">
+          Find healthcare advocates who can help you navigate your care
         </p>
-        <input style={{ border: "1px solid black" }} onChange={onChange} />
-        <button onClick={onClick}>Reset Search</button>
       </div>
-      <br />
-      <br />
-      <table>
-        <thead>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>City</th>
-          <th>Degree</th>
-          <th>Specialties</th>
-          <th>Years of Experience</th>
-          <th>Phone Number</th>
-        </thead>
-        <tbody>
-          {filteredAdvocates.map((advocate) => {
-            return (
-              <tr>
-                <td>{advocate.firstName}</td>
-                <td>{advocate.lastName}</td>
-                <td>{advocate.city}</td>
-                <td>{advocate.degree}</td>
-                <td>
-                  {advocate.specialties.map((s) => (
-                    <div>{s}</div>
-                  ))}
-                </td>
-                <td>{advocate.yearsOfExperience}</td>
-                <td>{advocate.phoneNumber}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+
+      {/* Search Section */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end">
+          <div className="flex-1">
+            <label
+              htmlFor="search"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Search Advocates
+            </label>
+            <input
+              id="search"
+              type="text"
+              placeholder="Search by name, city, degree, or specialty..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              onChange={onChange}
+            />
+          </div>
+          <UiButton
+            buttonLabel="Reset Search"
+            buttonCallback={onClick}
+            variant="outline"
+            size="md"
+          />
+        </div>
+
+        {document.getElementById("search-term")?.innerHTML && (
+          <div className="mt-4 text-sm text-gray-600">
+            Searching for:{" "}
+            <span className="font-medium" id="search-term"></span>
+          </div>
+        )}
+      </div>
+
+      {/* Table Section */}
+      <div className="h-[600px]">
+        <AdvocateTable
+          advocates={filteredAdvocates}
+          className="h-full"
+          onShowModal={handleShowModal}
+        />
+      </div>
+
+      {/* Advocate Modal */}
+      <AdvocateModal
+        advocate={selectedAdvocate}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </main>
   );
 }
