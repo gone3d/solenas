@@ -2,24 +2,7 @@
 
 import React from 'react';
 import AdvocateTableItem from './AdvocateTableItem';
-
-interface Advocate {
-  id: number;
-  firstName: string;
-  lastName: string;
-  city: string;
-  degree: string;
-  specialties: string[];
-  yearsOfExperience: number;
-  phoneNumber: number;
-  createdAt?: string;
-}
-
-interface AdvocateTableProps {
-  advocates: Advocate[];
-  className?: string;
-  onShowModal: (advocate: Advocate) => void;
-}
+import { Advocate, AdvocateTableProps } from '../data/interfaces';
 
 const AdvocateTable: React.FC<AdvocateTableProps> = ({ advocates, className = '', onShowModal }) => {
   return (

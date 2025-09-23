@@ -2,24 +2,7 @@
 
 import React from 'react';
 import UiButton from './UiButton';
-
-interface Advocate {
-  id: number;
-  firstName: string;
-  lastName: string;
-  city: string;
-  degree: string;
-  specialties: string[];
-  yearsOfExperience: number;
-  phoneNumber: number;
-  createdAt?: string;
-}
-
-interface AdvocateModalProps {
-  advocate: Advocate | null;
-  isOpen: boolean;
-  onClose: () => void;
-}
+import { Advocate, AdvocateModalProps } from '../data/interfaces';
 
 const AdvocateModal: React.FC<AdvocateModalProps> = ({ advocate, isOpen, onClose }) => {
   if (!isOpen || !advocate) return null;

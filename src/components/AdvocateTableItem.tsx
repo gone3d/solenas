@@ -2,23 +2,7 @@
 
 import React from 'react';
 import UiButton from './UiButton';
-
-interface Advocate {
-  id: number;
-  firstName: string;
-  lastName: string;
-  city: string;
-  degree: string;
-  specialties: string[];
-  yearsOfExperience: number;
-  phoneNumber: number;
-  createdAt?: string;
-}
-
-interface AdvocateTableItemProps {
-  advocate: Advocate;
-  onShowModal: (advocate: Advocate) => void;
-}
+import { Advocate, AdvocateTableItemProps } from '../data/interfaces';
 
 const AdvocateTableItem: React.FC<AdvocateTableItemProps> = ({ advocate, onShowModal }) => {
   // Format phone number to (xxx) xxx-xxxx
