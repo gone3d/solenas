@@ -4,17 +4,37 @@
 
 Given the simplicity of the application, I'd imagine it would be used as a section or module of a larger app, which would provide more data resources and frameworks. I implemented a few things demonstrating this idea:
 
-- An interfaces.ts file to capture the shared data structures used by the components. In a larger application, this would be broken down into logical groups, database, settings, etc. and have an index.ts file to make all imports similar. Right now, I have a single file, but I'd make one for the api and db code as well.
+- An interfaces.ts file to capture the shared data structures used by the components. In a larger application, this would be broken down into logical groups, database, settings, etc., and have an index.ts file to make all imports similar. Currently, I have a single file, but I'd create separate files for the API and database code, given more time.
 
-- A data service to be a single source of truth for api calls, src/services/advocateService.ts. This could be expanded to handle additional calls to the database, but there wasn't much more time. But what is important here is that by wrapping the data calls in a service, the app won't always have to be updated if/when the backend changes.
+- A data service to be a single source of truth for api calls, src/services/advocateService.ts. This could be expanded to handle additional calls to the database, but there wasn't much time remaining. But what is important here is that by wrapping the data calls in a service, the app won't always have to be updated if/when the backend changes.
 
-I didn't implement a number of architectural details that I normally would have in a new project, again, because of the time limit. However, isolating the key components, features and data handling for better maintainability has been started. _The key philosophy and approach here is that I won't be the last person to look at the code, so making it readable and organized pays for itself over time._
+- Reusable components are essential for maintainable code. I only had one, UIButton.tsx, but I reused it in several places with a couple of variations.
 
-For the AI collaboration, I used Anthropic's Claude Code in a terminal directly in VS Code. This allowed me to have access to the whole code repo. It did a lot of the coding, but all architectural changes, updates, and refactoring were done by prompts and at my direction (no agents). I wrote and edited some of the code, but due to time constraints, I was able to accomplish far more by leveraging the AI.
+- Shared methods are also important, and I added a utils.ts file with a phone number formatter as an example, simplifying code and maintainability.
 
-## Technical Discussion: Data Storage and Performance Optimizations
+- I also implemented an AdvocateModal.tsx to provide additional information about the advocate. The modal was a specific choice that allowed the user to view the details without navigating to another page and possibly losing their search results. I know that putting a face to the name (in the image section, but with no image, obviously) would be a key feature in helping a user make a choice.
 
-### Current Implementation
+- I didn't implement a number of architectural details that I normally would have in a new project, again, because of the time limit. However, organizing the key components into separate folders to allow for shared features and data handling for better maintainability has been started. _The key philosophy and approach here is that I won't be the last person to look at the code, so making it readable and organized pays for itself over time._
+
+One prominent missing element would be adaptive design and mobile compatibility. I had already laid out the design based on the original layout, adding the AdvocateTable and AdvocateTableItem. But what might have been better would be an AdvocateCard that could populate as a list of cards and scroll down the page on a mobile device. There are pros and cons for that approach as well, but in the real world, the design would have more than likely been approved and set before coding started.
+
+For the AI collaboration, I used Anthropic's Claude code directly in a terminal within VS Code. This allowed me to have access to the whole code repo. It did a lot of the coding, but all architectural changes, updates, and refactoring were done by prompts and at my direction (no agents). I wrote and edited some of the code, but due to time constraints, I was able to accomplish far more by leveraging the AI.
+
+### Other Items I Would Add With More Time
+
+- A testing framework (Jest) for code coverage
+- CRUD commands for the data
+- Login and user roles (Admin would have update, delete, create new records, etc.)
+- Additional data for each advocate that could be used to provide better, more focused search results.
+- Add an error handling service instead of using console.error()
+- Have a reset data button to fetch data, especially if we're making calls for search
+- Add Global Context to better manage the data
+
+## Technical Discussion:
+
+### Data Storage and Performance Optimizations
+
+#### Current Implementation
 
 The application currently uses **client-side React state** for data storage. This allowed me to search the stored data without making additional api calls. In other applications, building out the advocateService.ts to handle different queries, searches, and other CRUD-related calls would be straightforward.
 
@@ -31,17 +51,17 @@ The application currently uses **client-side React state** for data storage. Thi
 - **Re-fetching on every visit:** No persistence between page loads
 - **No shared state:** Other components can't access advocate data
 
-### Client-Side State Management with React Context
+### Alternative Approach: Global State Management with React Context
 
-#### Global State Management
+#### Why Global Context Would Be Beneficial
 
-For applications where advocate data doesn't change frequently, implementing a global context can improve performance and user experience:
+Currently, the advocate data is component-scoped and re-fetched on every page load. A **future enhancement would be implementing a global React Context** to manage advocate data across the entire application.
 
-#### Benefits of Context Approach
+#### Benefits of Global Context Implementation
 
 **Performance Benefits:**
 
-- **Single data fetch:** Load advocate data once per session
+- **Single data fetch:** Load advocate data once per session instead of per page load
 - **Persistent state:** Data retained when navigating between pages
 - **Reduced API calls:** No re-fetching on page revisits
 - **Shared filtering state:** Search terms persist across navigation
@@ -49,14 +69,17 @@ For applications where advocate data doesn't change frequently, implementing a g
 **User Experience Benefits:**
 
 - **Faster page loads:** No loading spinner on subsequent visits
-- **Maintained search state:** Users don't lose their search progress
+- **Maintained search state:** Users don't lose their search progress when navigating
 - **Consistent data:** All components use the same dataset
 
-**For Advocate Data Specifically:**
+**Cons of Global Context:**
 
-- **Low change frequency:** Advocate profiles rarely change during a user session
-- **Reference data:** Acts as a lookup table that benefits from caching
-- **Small dataset size:** Current advocate list easily fits in memory
+- **Stale data risk:** Users might not see updates until manual refresh
+- **Memory overhead:** Data persists longer than necessary
+- **Complexity:** Additional state management logic required
+- **Cache invalidation:** Need a strategy for when data becomes outdated
+
+In a larger application, the Global Context would most likely be enabled, and it would be simple enough to add the advocate data. If data/memory management becomes necessary, adjustments would be easy enough. With a large set of Advocates (100s or 1000s), a pagination scheme would work well, and combining that with additional database/api endpoints to better handle the data.
 
 ### Database/Server-Side Optimization Ideas
 
@@ -97,4 +120,17 @@ For applications where advocate data doesn't change frequently, implementing a g
 
 #### Conclusion
 
-While the current client-side approach works well for the current dataset size, implementing server-side search with proper indexing and caching would provide better scalability and user experience as the application and data grow.
+The current **client-side approach with component-scoped state** works well for the current dataset size and provides fast, responsive search functionality. However, as the application evolves, there are multiple enhancement paths to consider:
+
+**Short-term improvements:**
+
+- **Global Context implementation** would improve user experience by maintaining state across navigation while keeping the same simple architecture
+- **Better error handling and loading states** for improved user feedback
+
+**Long-term scalability:**
+
+- **Server-side search with database indexing** becomes essential as data grows beyond a few hundred advocates
+- **Pagination and lazy loading** for handling large datasets efficiently
+- **Hybrid approaches** that balance performance, data freshness, and user experience
+
+The choice between these approaches depends on specific business requirements around data freshness, user experience priorities, and expected scale. For a healthcare advocate platform, the current approach provides an excellent foundation that can evolve incrementally as needs grow.

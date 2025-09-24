@@ -12,7 +12,6 @@ const Search: React.FC<SearchProps> = ({ advocates, onFilter }) => {
     const newSearchTerm = e.target.value;
     setSearchTerm(newSearchTerm);
 
-    console.log("filtering advocates...");
     const filteredAdvocates = advocateService.searchAdvocates(
       advocates,
       newSearchTerm

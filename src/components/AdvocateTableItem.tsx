@@ -3,23 +3,12 @@
 import React from "react";
 import UiButton from "./UiButton";
 import { Advocate, AdvocateTableItemProps } from "../data";
+import { formatPhoneNumber } from "../utils/utils";
 
 const AdvocateTableItem: React.FC<AdvocateTableItemProps> = ({
   advocate,
   onShowModal,
 }) => {
-  // Format phone number to (xxx) xxx-xxxx
-  const formatPhoneNumber = (phone: number): string => {
-    const phoneStr = phone.toString();
-    if (phoneStr.length === 10) {
-      return `(${phoneStr.slice(0, 3)}) ${phoneStr.slice(
-        3,
-        6
-      )}-${phoneStr.slice(6)}`;
-    }
-    return phoneStr; // Return as-is if not 10 digits
-  };
-
   // Sort specialties alphabetically
   const sortedSpecialties = [...advocate.specialties].sort();
 

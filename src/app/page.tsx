@@ -18,7 +18,6 @@ export default function Home() {
   useEffect(() => {
     const fetchAdvocates = async () => {
       try {
-        console.log("fetching advocates...");
         const advocatesData = await advocateService.getAdvocates();
         setAdvocates(advocatesData);
         setFilteredAdvocates(advocatesData);
