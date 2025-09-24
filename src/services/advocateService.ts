@@ -1,8 +1,8 @@
 // Database service for advocate-related API calls
-import { Advocate, AdvocateResponse } from '../data/interfaces';
+import { Advocate, AdvocateResponse } from "../data";
 
 class AdvocateService {
-  private baseUrl = '/api';
+  private baseUrl = "/api";
 
   /**
    * Fetch all advocates from the API
@@ -19,13 +19,13 @@ class AdvocateService {
       const jsonResponse: AdvocateResponse = await response.json();
       return jsonResponse.data;
     } catch (error) {
-      console.error('Error fetching advocates:', error);
+      console.error("Error fetching advocates:", error);
       throw error;
     }
   }
 
   /**
-   * Search advocates by term
+   * Search advocates by term using a searchable text approach
    * @param advocates - Array of advocates to search through
    * @param searchTerm - Term to search for
    * @returns Filtered array of advocates
@@ -38,17 +38,30 @@ class AdvocateService {
     const lowerSearchTerm = searchTerm.toLowerCase();
 
     return advocates.filter((advocate) => {
-      return (
-        advocate.firstName.toLowerCase().includes(lowerSearchTerm) ||
-        advocate.lastName.toLowerCase().includes(lowerSearchTerm) ||
-        advocate.city.toLowerCase().includes(lowerSearchTerm) ||
-        advocate.degree.toLowerCase().includes(lowerSearchTerm) ||
-        advocate.specialties.some(specialty =>
-          specialty.toLowerCase().includes(lowerSearchTerm)
-        ) ||
-        advocate.yearsOfExperience.toString().includes(lowerSearchTerm)
-      );
+      // Create a searchable text string from all relevant fields
+      const searchableText = this.createSearchableText(advocate).toLowerCase();
+      return searchableText.includes(lowerSearchTerm);
     });
+  }
+
+  /**
+   * Creates a searchable text string from advocate data
+   * Similar to a search_vector in SQL databases
+   * @param advocate - The advocate object
+   * @returns Concatenated searchable string
+   */
+  private createSearchableText(advocate: Advocate): string {
+    const searchableFields = [
+      advocate.firstName,
+      advocate.lastName,
+      advocate.city,
+      advocate.degree,
+      advocate.specialties.join(" "),
+      advocate.yearsOfExperience.toString(),
+      advocate.phoneNumber.toString(),
+    ];
+
+    return searchableFields.join(" ").toLowerCase();
   }
 }
 
