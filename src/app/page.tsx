@@ -5,12 +5,14 @@ import Search from "../components/Search";
 import AdvocateTable from "../components/AdvocateTable";
 import AdvocateModal from "../components/AdvocateModal";
 import advocateService from "../services/advocateService";
-import { Advocate } from "../data/interfaces";
+import { Advocate } from "../data";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
   const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
-  const [selectedAdvocate, setSelectedAdvocate] = useState<Advocate | null>(null);
+  const [selectedAdvocate, setSelectedAdvocate] = useState<Advocate | null>(
+    null
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {

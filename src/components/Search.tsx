@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import UiButton from "./UiButton";
-import { Advocate, SearchProps } from "../data/interfaces";
+import { Advocate, SearchProps } from "../data";
+import advocateService from "../services/advocateService";
 
 const Search: React.FC<SearchProps> = ({ advocates, onFilter }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -12,26 +13,15 @@ const Search: React.FC<SearchProps> = ({ advocates, onFilter }) => {
     setSearchTerm(newSearchTerm);
 
     console.log("filtering advocates...");
-    const lowerSearchTerm = newSearchTerm.toLowerCase();
-    const filteredAdvocates = advocates.filter((advocate) => {
-      return (
-        advocate.firstName.toLowerCase().includes(lowerSearchTerm) ||
-        advocate.lastName.toLowerCase().includes(lowerSearchTerm) ||
-        advocate.city.toLowerCase().includes(lowerSearchTerm) ||
-        advocate.degree.toLowerCase().includes(lowerSearchTerm) ||
-        advocate.specialties.some(specialty =>
-          specialty.toLowerCase().includes(lowerSearchTerm)
-        ) ||
-        advocate.yearsOfExperience.toString().includes(lowerSearchTerm)
-      );
-    });
-
+    const filteredAdvocates = advocateService.searchAdvocates(
+      advocates,
+      newSearchTerm
+    );
     onFilter(filteredAdvocates);
   };
 
   const onReset = () => {
     setSearchTerm("");
-    console.log(advocates);
     onFilter(advocates);
   };
 
@@ -64,8 +54,7 @@ const Search: React.FC<SearchProps> = ({ advocates, onFilter }) => {
 
       {searchTerm && (
         <div className="mt-4 text-sm text-gray-600">
-          Searching for:{" "}
-          <span className="font-medium">{searchTerm}</span>
+          Searching for: <span className="font-medium">{searchTerm}</span>
         </div>
       )}
     </div>
